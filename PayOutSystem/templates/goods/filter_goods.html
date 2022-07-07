@@ -1,0 +1,207 @@
+{% load utils %}
+
+<div name="root">
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>工单号</th>
+                <th>工单状态</th>
+                <th>问题类型</th>
+                <th>预期处理时限</th>
+                <th>问题标题</th>
+                <th>收货人</th>
+                <th>提交时间</th>
+                <th>提交人员</th>
+                <th>修改时间</th>
+                <th>处理人员</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in page %}
+                <tr>
+                    <td>{{ forloop.counter|rows:page.number }}</td>
+                    <td>{{ item.number }}</td>
+                    <td>{{ item.status.status }}</td>
+                    <td>{{ item.goods_type }}</td>
+                    <td>{{ item.time }}小时</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.clent_name }}</td>
+                    <td>{{ item.createtime }}</td>
+                    <td>{{ item.t_user.name }}</td>
+                    <td>{{ item.endtime }}</td>
+                    <td>{{ item.c_user.name }}</td>
+                    <td>
+                        {% if user.level == '0' %}
+                            <a href="/check_goods/{{ item.id }}" target="_blank">查看</a>
+                            {% if item.status.status == '已删除' %}
+                                <a href="javascript:if(confirm('确定彻底删除订单吗？')){location.href = '/real_delete_goods/{{ item.id }}'}">彻底删除</a>
+                            {% else %}
+                                <a href="javascript:if(confirm('确定删除订单吗？')){location.href = '/delete_goods/{{ item.id }}'}">删除</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="/check_goods/{{ item.id }}" target="_blank">查看</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div status="{{ status }}" sort_name="{{ sort_name }}" sort_method="{{ sort_method }}" page_number="{{ page.number }}">
+            <span>共 {{ pa.count }} 项，共 {{ pa.num_pages }} 页， 当前第 {{ page.number }} 页 </span>
+            {% if page.has_previous %}
+               <input type="button" class="pre_page" value="上一页"/>
+            {% endif %}
+            {% if page.has_next %}
+                <input type="button" class="next_page" value="下一页"/>
+            {% endif %}
+            {% if pa.num_pages >= 2 %}
+                <span>
+                跳转到
+                <input name="page_number" type="text" placeholder="页数" required="required"/>
+                <input type="button" class="tiaozhuan" value="跳转"/>
+            </span>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        // 上一页
+        function pre_page(e) {
+            e.stopPropagation();
+            let datas = $(e.currentTarget).closest('div')
+            let status = datas.attr('status');
+            let sort_name = datas.attr('sort_name');
+            let sort_method = datas.attr('sort_method');
+            let page_number = parseInt(datas.attr('page_number'));
+            console.log(page_number)
+
+            var data = {};
+            if (status != 'None' && status != null && status != '') {
+                data['status'] = status;
+            }
+            if (sort_name != 'None' && sort_name != null && sort_name != '') {
+                data['sort_name'] = sort_name;
+            }
+            if (sort_method != 'None' && sort_method != null && sort_method != '') {
+                data['sort_method'] = sort_method;
+            }
+            if (page_number != 'None' && page_number != null && page_number != '') {
+                data['page'] = parseInt(page_number) - 1;
+            }
+
+            $.ajax({
+                url: '/get_goods',
+                data: data,
+                type: 'GET',
+                dataType: 'html',
+                success: function (data) {
+                    $(e.currentTarget).closest('div[name=root]').html(data);
+                },
+                timeout: 3000,
+                error: function () {
+                    alert('网络超时,请稍后再试!');
+                }
+            });
+        }
+
+        // 下一页
+        function next_page(e) {
+            e.stopPropagation();
+            let datas = $(e.currentTarget).closest('div')
+            let status = datas.attr('status');
+            let sort_name = datas.attr('sort_name');
+            let sort_method = datas.attr('sort_method');
+            let page_number = datas.attr('page_number') ? parseInt(datas.attr('page_number')) : 1;
+
+            var data = {};
+            if (status != 'None' && status != null && status != '') {
+                data['status'] = status;
+            }
+            if (sort_name != 'None' && sort_name != null && sort_name != '') {
+                data['sort_name'] = sort_name;
+            }
+            if (sort_method != 'None' && sort_method != null && sort_method != '') {
+                data['sort_method'] = sort_method;
+            }
+            if (page_number != 'None' && page_number != null && page_number != '') {
+                data['page'] = page_number + 1;
+            }
+            $.ajax({
+                url: '/get_goods',
+                data: data,
+                type: 'GET',
+                dataType: 'html',
+                success: function (data) {
+                    {#console.log(data)#}
+                    $(e.currentTarget).closest('div[name=root]').html(data);
+                },
+                timeout: 3000,
+                error: function () {
+                    alert('网络超时,请稍后再试!');
+                }
+            });
+        }
+
+        //跳转
+        function skip(e) {
+            e.stopPropagation();
+            let page_num = parseInt($(this).prev().val());
+
+            if ($(this).prev().val() == '') {
+                alert('请输入页数！');
+            }else if(page_num < 0 || page_num > {{ pa.num_pages }}){
+                alert('页数超出范围！');
+            } else {
+                let datas = $(this).closest('div');
+
+                let page = parseInt(datas.attr('page'));
+                let pages = parseInt(datas.attr('pages'));
+                let status = datas.attr('status');
+                let sort_name = datas.attr('sort_name');
+                let sort_method = datas.attr('sort_method');
+
+                let new_page = parseInt($(this).prev().val());
+
+                var data = {};
+                if (status != 'None' && status != null && status != '') {
+                    data['status'] = status;
+                }
+                if (page != 'None' && page != null && page != '') {
+                    data['page'] = new_page;
+                }
+                if (sort_name != 'None' && sort_name != null && sort_name != '') {
+                    data['sort_name'] = sort_name;
+                }
+                if (sort_method != 'None' && sort_method != null && sort_method != '') {
+                    data['sort_method'] = sort_method;
+                }
+
+                if (new_page <= 0 || new_page > pages) {
+                    alert('没有此页！');
+                } else {
+                    $.ajax({
+                        url: '/get_goods',
+                        data: data,
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function (data) {
+                            $(e.currentTarget).closest('div[name=root]').html($(data).html());
+                        },
+                        timeout: 3000,
+                        error: function () {
+                            alert('网络超时,请稍后再试!');
+                        }
+                    });
+                }
+            }
+        }
+
+
+        $('.pre_page').on('click', pre_page);
+        $('.next_page').on('click', next_page);
+        $('.tiaozhuan').on('click', skip);
+    </script>
+
+</div>

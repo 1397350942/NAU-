@@ -1,0 +1,12 @@
+python版本：3.9.7
+
+python需要安装以下几个库：
+
+opencv ----> 图像压缩
+numpy  ----> 图像处理
+ffmpeg ----> 视频压缩
+django ----> web框架
+mysql-client ---> 数据库连接
+mysql  ---> 数据库
+uwsgi  ---> wsgi 服务（仅正式环境需要）
+nginx ---> http 反向代理（仅正式环境需要）

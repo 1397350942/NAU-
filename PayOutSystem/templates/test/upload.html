@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传文件测试</title>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="name" required placeholder="请输入姓名">
+        <input type="file" name="files" required/>
+        <input type="submit" value="提交文件" />
+    </form>
+</body>
+</html>

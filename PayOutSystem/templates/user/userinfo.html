@@ -1,0 +1,261 @@
+{% extends 'home/home.html' %}
+{% block right %}
+    <style>
+        #neirong {
+            background-color: white;
+            width: 96%;
+            margin: 10px auto;
+            padding: 20px;
+            box-shadow: #fead8f 0px 0px 20px;
+        }
+
+        .bt2 {
+            padding: 5px 20px;
+            background-color: #fe7843;
+            color: white;
+            font-size: 20px;
+        }
+
+        .users {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            background-color: white;
+            overflow: auto;
+        }
+
+        table {
+            padding: 10px;
+            background-color: white;
+            margin: 20px auto;
+        }
+
+        th, td {
+            font-size: 16px;
+            padding: 5px 10px;
+            text-align: center;
+        }
+
+        th {
+            font-size: 18px;
+        }
+
+        input[type=text], input[type=password] {
+            margin-bottom: 20px;
+            margin-top: 10px;
+            font-size: 16px;
+            padding: 5px 10px;
+            border: #fe7843 solid 2px;
+            border-radius: 5px;
+            width: 300px;
+            position: relative;
+            left: 20px;
+        }
+
+        form[name="form1"] {
+            margin: 20px;
+            font-size: 20px;
+            color: #fe7843;
+        }
+
+        input[type=radio] {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 10px;
+            margin-left: 30px;
+            cursor: pointer;
+        }
+
+        input[type=submit], input[type=button] {
+            font-size: 20px;
+            padding: 5px 30px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #fe7843;
+            border: none;
+            border-radius: 10px;
+            margin-right: 50px;
+        }
+
+        input[type=submit]:hover, input[type=button]:hover {
+            background-color: red;
+            cursor: pointer;
+        }
+
+
+        #headPhoto {
+            width: 160px;
+            height: 160px;
+            border-radius: 100%;
+            border: #fe7843 solid 4px;
+            background-color: white;
+            position: relative;
+            left: 80px;
+        }
+
+        #headPhoto:hover {
+            cursor: pointer;
+        }
+
+        #username {
+            font-size: 20px;
+            color:black;
+            margin-bottom: 20px;
+            margin-left: 30px;
+        }
+
+        #changepass {
+            background-color: white;
+            margin-left: 50%;
+            margin-top: 20%;
+            top: -100px;
+            position: fixed;
+            left: -200px;
+            padding: 30px;
+            color: black;
+            width: 400px;
+            height: 250px;
+            border-radius: 40px;
+            border: #fe7843 solid 2px;
+            box-shadow: #fe7843 0px 0px 20px;
+            font-size: 20px;
+            color: #fe7843;
+        }
+
+    </style>
+    <div id="neirong">
+        <div class="bt2">
+            用户信息
+        </div>
+        <div class="users">
+            <form method="post" name="form1" enctype="multipart/form-data" action="/updata_user/{{ luser.id }}"
+                  onsubmit="return check_info(event)">
+                {% csrf_token %}
+                账号：<p id="username">{{ luser.username }}</p>
+                头像：<br/>
+                <image id="headPhoto" src="/media/{{ luser.head_photo }}" alt="无图片"/>
+                <input hidden type="file" id="input_headPhoto" name="headphoto" accept="image/*"
+                       onchange="check_files(event)"/><br/>
+                <script>
+                    function check_files(event) {
+                        if (event.target.files[0].size > 1024 * 1024 * 2) {
+                            alert("上传图片大小不能超过2MB!")
+                            event.target.value = ''
+                            return false
+                        }
+                        return true
+                    }
+                </script>
+                <br/>
+                姓名:<br/><input type="text" onchange="javascript:ischange = true;" name="name" value="{{ luser.name }}"
+                               placeholder="请输入用户姓名"/><br>
+                手机号:<br/><input type="text" onchange="javascript:ischange = true;" name="number"
+                                value="{{ luser.number }}" placeholder="请输入用户手机号"/><br>
+
+                {% if user.level == '0' %}
+                    权限级别:<br/>
+                    {% if luser.level == '0' %}
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" value="0"
+                               checked="checked"/>管理员
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" value="1"/>售后人员
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" value="2"/>申报人员<br/>
+                    {% elif luser.level == '1' %}
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" value="0"/>管理员
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" checked="checked"
+                               value="1"/>售后人员
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" value="2"/>申报人员<br/>
+                    {% elif luser.level == '2' %}
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" value="0"/>管理员
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" value="1"/>售后人员
+                        <input type="radio" onchange="javascript:ischange = true;" name="level" checked="checked"
+                               value="2"/>申报人员<br/>
+                    {% endif %}
+                {% endif %}
+
+                <input type="button" id="changeps" value="修改密码"/>
+                <input type="submit" id="sub" value="确认修改"/>
+            </form>
+
+            <div id="changepass" hidden>
+                <form action="/change_password/" method="post" onsubmit="return changepassword(event)">
+                    {% csrf_token %}
+                    新密码：
+                    <br/>
+                    <input type="password" id="pass1" required placeholder="请输入新的密码"/>
+                    <br/>
+                    确认密码：
+                    <br/>
+                    <input type="password" id="pass2" required name="password" placeholder="再次输入新的密码"/>
+                    <input type="text" name="userid" value="{{ luser.id }}" hidden/>
+                    <br/>
+                    <input type="submit" value="确认修改"/>
+                    <input type="button" id="close" value="取消"/>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        var ischange = false;
+        // 点击头像调用input选择文件
+        $('#headPhoto').on('click', (e) => {
+            $('#input_headPhoto').click()
+        });
+
+        function check_info(event) {
+            if (confirm("确定修改信息？")) {
+                if (ischange == false) {
+                    alert("请至少修改一项用户信息！")
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // 选择完成修改头像
+        $('#input_headPhoto').change((e) => {
+            // 获取上传文件对象
+            var file = $(e.target)[0].files[0];
+            //读取文件url
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            // 阅读文件完成后触发的事件
+            reader.onload = function () {
+                $('#headPhoto').attr('src', this.result);
+                ischange = true;
+            };
+        });
+
+        // 修改密码按钮
+        $('#changeps').click(function (e) {
+            $("#changepass").prop('hidden', false);
+        });
+
+        // 修改密码
+        function changepassword(event) {
+            var p1 = $('#pass1');
+            var p2 = $('#pass2');
+            if (p1.val() != p2.val()) {
+                alert('两次输入密码不一致！')
+                p1.val('');
+                p2.val('');
+                return false;
+            }
+            if (confirm('确定修改密码？')) {
+                $("#changepass").prop('hidden', true);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // 取消修改按钮
+        $('#close').click(function (e) {
+            $('#pass1').val('');
+            $('#pass2').val('');
+            $('#changepass').prop('hidden', true);
+        });
+    </script>
+{% endblock %}

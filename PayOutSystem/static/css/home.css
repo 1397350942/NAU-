@@ -1,0 +1,210 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+a {
+    text-decoration: none;
+}
+
+#top {
+    height: 50px;
+    background-color: #fe7843;
+    color: white;
+}
+
+#top > * {
+    float: left;
+}
+
+#title {
+    position: relative;
+    top: 10px;
+    left: 50px;
+    font-size: 22px;
+}
+
+#user > img {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    border-radius: 50px;
+    position: relative;
+    background-color: white;
+    right: 20px;
+    border: white solid 2px;
+}
+
+#user {
+    display: inline-block;
+    height: 40px;
+    width: auto;
+    background-color: #fead8f;
+    position: relative;
+    top: 5px;
+    right: 40px;
+}
+
+#user > span {
+    font-size: 20px;
+    position: relative;
+    right: 15px;
+    top: 2px;
+}
+
+#user:hover {
+    background-color: red;
+}
+
+#user_op {
+    position: absolute;
+    right: 50px;
+    height: 100px;
+}
+
+#user_op > a {
+    color: white;
+}
+
+
+#op > svg {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    position: relative;
+    bottom: 2px;
+}
+
+.clear {
+    clear: both;
+}
+
+#op {
+    position: relative;
+    top: 8px;
+    font-size: 20px;
+}
+
+#op:hover {
+    cursor: pointer;
+    color: red;
+}
+
+#left {
+    display: inline-block;
+    float: left;
+    height: 100%;
+    width: 16%;
+    background-color: white;
+}
+
+#right {
+    /*height: max-content;*/
+    width: 82%;
+    /*background-color: gainsboro;*/
+    /*position: absolute;*/
+    /*right: 0px;*/
+    float: left;
+}
+
+body {
+    background-color: white;
+}
+
+#left > div {
+    margin-top: 20px;
+}
+
+.item {
+    height: 30px;
+    text-align: left;
+    font-size: 20px;
+    color: black;
+    padding: 10px 0px;
+}
+
+.item:hover {
+    background-color: #fe7843;
+    color: white;
+}
+
+.item > span {
+    margin-left: 20%;
+}
+
+svg {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+}
+
+.block {
+    width: 300px;
+    height: 300px;
+    background-color: white;
+    padding: 20px;
+    border: #fe7843 solid 2px;
+    margin: 10px;
+    border-radius: 20px;
+    float: left;
+    box-shadow: #fead8f 10px 10px 20px;
+}
+
+.block > p {
+    font-size: 30px;
+    font-weight: bold;
+    color: #fe7843;
+    margin-bottom: 20px;
+}
+
+.block > div > p {
+    font-size: 20px;
+    line-height: 40px;
+}
+
+#timeout_bg {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+#timeout {
+    background-color: white;
+    width: 360px;
+    height: 160px;
+    margin: 0px auto;
+    margin-top: 10%;
+    padding: 20px;
+    border: #fe7843 2px solid;
+    border-radius: 20px;
+    z-index: 999;
+}
+
+#timeout > p {
+    font-size: 24px;
+    color: #fe7843;
+    position: relative;
+    top:30px;
+    text-align: center;
+}
+
+#timeout > button {
+    font-size: 22px;
+    width: 150px;
+    height: 40px;
+    margin-left: 16px;
+    display: inline;
+    position: relative;
+    background-color: #fe7843;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    top: 50px;
+
+}
+
+#timeout > button:hover {
+    background-color: red;
+    cursor: pointer;
+}

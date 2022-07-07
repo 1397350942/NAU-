@@ -1,0 +1,147 @@
+{% extends 'home/home.html' %}
+
+{% block right %}
+    <style>
+        #creat_user {
+            background-color: white;
+            width: 95%;
+            margin: 10px auto;
+            padding: 20px;
+            box-shadow: #fead8f 0px 0px 20px;
+        }
+
+        #user_title {
+            padding: 5px 20px;
+            background-color: #fe7843;
+            color: white;
+            font-size: 20px;
+        }
+
+        #user_inputs > form {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #fe7843;
+        }
+
+        #user_inputs{
+            padding: 20px;
+        }
+
+        #user_inputs > form > input[type=text], input[type=password] {
+            margin-bottom: 20px;
+            margin-top: 10px;
+            font-size: 16px;
+            padding: 5px 10px;
+            border: #fe7843 solid 2px;
+            border-radius: 5px;
+            width: 300px;
+            position: relative;
+            left: 20px;
+        }
+
+        #user_inputs input[type=radio] {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 10px;
+            margin-left: 30px;
+            cursor: pointer;
+        }
+
+        #user_inputs input[type=submit] {
+            font-size: 20px;
+            padding: 5px 30px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #fe7843;
+            border: none;
+            border-radius: 10px;
+        }
+
+        #user_inputs input[type=submit]:hover {
+            background-color: red;
+            cursor: pointer;
+        }
+
+        #headPhoto {
+            width: 160px;
+            height: 160px;
+            border-radius: 100%;
+            border: #fe7843 solid 4px;
+            background-color: white;
+            position: relative;
+            left: 80px;
+        }
+
+        #headPhoto:hover {
+            cursor: pointer;
+        }
+
+    </style>
+
+    <div id="creat_user">
+        <div id="user_title">添加用户</div>
+        <div id="user_inputs">
+            <form method="post" enctype="multipart/form-data" name="form1" action="" onsubmit="checkpass()">
+                {% csrf_token %}
+                头像:<br/>
+                <img id="headPhoto" src="/media/headPhoto/bdd.jpg">
+                <input hidden type="file" id="input_headPhoto" name="headphoto" accept="image/*" onchange="check_files(event)"/><br/>
+                <script>
+                    function check_files(event){
+                        if(event.target.files[0].size > 1024 * 1024 * 2){
+                            alert("上传图片大小不能超过2MB!")
+                            event.target.value = ''
+                            return false
+                        }
+                        return true
+                    }
+                </script>
+                用户名:<br/><input type="text" name="username" required="required" placeholder="请输入用户名"/><br>
+                密码:<br/><input type="password" name="password1" placeholder="请输入密码" required="required"/><br>
+                确认密码:<br/><input type="password" name="password2" placeholder="请再次输入密码" required="required"/><br>
+                昵称:<br/><input type="text" name="name" placeholder="请输入用户姓名" required="required"/><br>
+                手机号:<br/><input type="text" name="number" placeholder="请输入用户手机号" required="required"/><br>
+                权限级别:<br/>
+                <input type="radio" name="level" value="0" required="required"/>管理员
+                <input type="radio" name="level" value="1"/>售后人员
+                <input type="radio" name="level" value="2"/>申报人员<br/>
+
+                <input type="submit" id="sub" value="注册"/>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $('#sub').click(function (e) {
+            let ps1 = $('input[name="password1"]');
+            let ps2 = $('input[name="password2"]');
+            if (ps1.val() != ps2.val()) {
+                alert('两次输入的密码不一致!');
+                ps1.val("");
+                ps2.val("");
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        $('#headPhoto').on('click', (e) => {
+            $('#input_headPhoto').click()
+        });
+
+        $('#input_headPhoto').change((e) => {
+            // 获取上传文件对象
+            var file = $(e.target)[0].files[0];
+            //读取文件url
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            // 阅读文件完成后触发的事件
+            reader.onload = function () {
+                $('#headPhoto').attr('src', this.result);
+            };
+        });
+    </script>
+
+{% endblock right %}

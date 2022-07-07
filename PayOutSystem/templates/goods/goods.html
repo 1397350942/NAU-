@@ -1,0 +1,445 @@
+{% extends 'home/home.html' %}
+
+{% block right %}
+
+    <style>
+        #neirong {
+            background-color: white;
+            width: 96%;
+            margin: 10px auto;
+            padding: 20px;
+            box-shadow: #fead8f 0px 0px 20px;
+        }
+
+        .bt {
+            padding: 5px 20px;
+            background-color: #fe7843;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .bt:hover {
+            background-color: red;
+            cursor: pointer;
+        }
+
+        .bt2 {
+            padding: 5px 20px;
+            background-color: #fe7843;
+            color: white;
+            font-size: 20px;
+        }
+
+        .goods {
+        {#width: 96%;#} margin-bottom: 20px;
+            padding-bottom: 20px;
+            background-color: #e2e2e2;
+            overflow: auto;
+            text-align: center;
+        }
+
+        .zhankai {
+            float: right;
+            fill: white;
+        }
+
+        #chaxun {
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: bisque;
+            margin-bottom: 20px;
+        }
+
+        #chaxun select, input {
+            font-size: 16px;
+            padding: 2px 10px;
+            background-color: #fe7843;
+            color: white;
+            border: #fe7843 solid 2px;
+            border-radius: 5px;
+            margin: 0px 20px;
+        }
+
+        #chaxun select:hover, input[type=submit]:hover, input[type=button]:hover {
+            cursor: pointer;
+            background-color: red;
+        }
+
+        table {
+            padding: 10px;
+            background-color: white;
+            margin: 20px auto;
+        }
+
+        th, td {
+            font-size: 16px;
+            padding: 5px 2px;
+            text-align: center;
+        }
+
+        th {
+            font-size: 18px;
+        }
+
+        .goods_num {
+            background-color: white;
+            color: red;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 16px;
+            position: absolute;
+            right: 150px;
+        }
+
+    </style>
+
+    <div id="neirong">
+        <div>
+            <div class="bt2">
+                查询工单
+            </div>
+            <div>
+                <div id="chaxun">
+                    <form id="chaxun_form">
+                        按照
+                        <select name="type" required="required">
+                            <option value="username">收货人</option>
+                            <option value="number">工单号</option>
+                            <option value="goods_number">快递单号</option>
+                        </select>
+                        为
+                        <input type="text" name="value" required="required"/>
+                        <input type="submit" value="查询"/>
+                        <input id="chaxun_clear" type="button" value="清除"/>
+                    </form>
+                </div>
+                <div id="cx_request" class="goods" hidden="hidden">
+
+                </div>
+                <script>
+                    let div = $('#chaxun').next();
+
+                    // 查询按钮
+                    // ajax查询
+                    $('#chaxun_form').on('submit', (e) => {
+
+                        let filter_name = $('select[name=type]').val();
+                        let filter_val = $('input[name=value]').val();
+                        $.ajax({
+                            url: '/get_goods',
+                            type: 'GET',
+                            data: {'filter_name': filter_name, 'filter_val': filter_val},
+                            dataType: 'html',
+                            success: function (data) {
+                                div.html(data)
+                                div.slideDown('fast')
+                            },
+                            timeout: 3000,
+                            error: function () {
+                                alert('网络超时。');
+                            }
+                        });
+                        return false;
+                    });
+
+                    // 清除按钮
+                    $('#chaxun_clear').on('click', (e) => {
+                        $('#cx_request').slideUp('fast')
+                        $('input[name=value]').val('');
+                    })
+                </script>
+            </div>
+        </div>
+
+        <div>
+            <div class="bt" id="daijieqv">
+                待接取工单
+                <span class="goods_num">{{ goods_init.wait }} 项</span>
+                <span class="zhankai">
+                     <svg t="1646220854140" viewBox="0 0 1024 1024" version="1.1"
+                          xmlns="http://www.w3.org/2000/svg" p-id="1027">
+                    <path d="M300.104 940.045c-10.957 0-21.93-4.157-30.273-12.528-16.73-16.723-16.73-43.848-0.016-60.562L646.702 490.01 269.815 113.139c-16.715-16.723-16.715-43.848 0-60.58 16.723-16.686 43.848-16.686 60.578 0l407.16 407.161c16.707 16.732 16.707 43.857 0 60.562l-407.16 407.217c-8.359 8.37-19.336 12.546-30.289 12.546z"
+                          p-id="1028"></path>
+                </svg>
+                </span>
+            </div>
+
+            <div class="goods" hidden="hidden">
+
+            </div>
+        </div>
+        <script>
+            $('#daijieqv').on('click', (e) => {
+                let div = $('#daijieqv').next();
+                $.ajax({
+                    url: '/get_goods',
+                    data: {status: '未处理', sort_name: 'createtime'},
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function (data) {
+
+                        // 旋转箭头
+                        let svg = $('#daijieqv').find('svg')
+                        if (svg.css('transform') === 'matrix(0, 1, -1, 0, 0, 0)') {
+                            svg.css('transform', 'rotate(0deg)')
+                        } else {
+                            svg.css('transform', 'rotate(90deg)')
+                        }
+
+                        div.html(data)
+                        div.slideToggle('fast')
+                    },
+                    timeout: 3000,
+                    error: function () {
+                        alert('网络超时。');
+                    }
+                });
+            });
+        </script>
+
+        <div>
+            <div class="bt" id="daiwancheng">
+                待完成工单
+                <span class="goods_num">{{ goods_init.now }} 项</span>
+                <span class="zhankai">
+                     <svg t="1646220854140" viewBox="0 0 1024 1024" version="1.1"
+                          xmlns="http://www.w3.org/2000/svg" p-id="1027">
+                    <path d="M300.104 940.045c-10.957 0-21.93-4.157-30.273-12.528-16.73-16.723-16.73-43.848-0.016-60.562L646.702 490.01 269.815 113.139c-16.715-16.723-16.715-43.848 0-60.58 16.723-16.686 43.848-16.686 60.578 0l407.16 407.161c16.707 16.732 16.707 43.857 0 60.562l-407.16 407.217c-8.359 8.37-19.336 12.546-30.289 12.546z"
+                          p-id="1028"></path>
+                </svg>
+                </span>
+
+            </div>
+            <div class="goods" hidden="hidden">
+
+            </div>
+        </div>
+        <script>
+            $('#daiwancheng').on('click', (e) => {
+                let div = $('#daiwancheng').next();
+                $.ajax({
+                    url: '/get_goods',
+                    data: {status: '正在处理', page: 1, sort_name: 'createtime'},
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function (data) {
+                        // 旋转箭头
+                        let svg = $('#daiwancheng').find('svg')
+                        if (svg.css('transform') === 'matrix(0, 1, -1, 0, 0, 0)') {
+                            svg.css('transform', 'rotate(0deg)')
+                        } else {
+                            svg.css('transform', 'rotate(90deg)')
+                        }
+
+                        div.html(data)
+                        div.slideToggle('fast')
+                    },
+                    timeout: 3000,
+                    error: function () {
+                        alert('网络超时。');
+                    }
+                });
+            });
+        </script>
+        <div>
+            <div class="bt" id="yichaoshi">
+                已超时工单
+                <span class="goods_num">{{ goods_init.timeout }} 项</span>
+                <span class="zhankai">
+                    <svg t="1646220854140" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="1027">
+                        <path d="M300.104 940.045c-10.957 0-21.93-4.157-30.273-12.528-16.73-16.723-16.73-43.848-0.016-60.562L646.702 490.01 269.815 113.139c-16.715-16.723-16.715-43.848 0-60.58 16.723-16.686 43.848-16.686 60.578 0l407.16 407.161c16.707 16.732 16.707 43.857 0 60.562l-407.16 407.217c-8.359 8.37-19.336 12.546-30.289 12.546z"
+                              p-id="1028"></path>
+                    </svg>
+                </span>
+
+            </div>
+            <div class="goods" hidden="hidden">
+
+            </div>
+            <script>
+                // 超时工单查询
+                function ckcs(event) {
+                    let div = $('#yichaoshi').next();
+                    $.ajax({
+                        url: '/get_goods',
+                        data: {status: '已超时', page: 1, sort_name: 'createtime'},
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function (data) {
+                            // 旋转箭头
+                            let svg = $('#yichaoshi').find('svg')
+                            if (svg.css('transform') === 'matrix(0, 1, -1, 0, 0, 0)') {
+                                svg.css('transform', 'rotate(0deg)')
+                            } else {
+                                svg.css('transform', 'rotate(90deg)')
+                            }
+
+                            div.html(data)
+                            div.slideToggle('fast')
+
+                        },
+                        timeout: 3000,
+                        error: function () {
+                            alert('网络超时。');
+                        }
+                    });
+                }
+
+                // 绑定事件给已超时div
+                $('#yichaoshi').click(ckcs)
+
+                window.onload = function () {
+                    if (location.search.split('=')[1] == 'timeout') {
+                        ckcs()
+                    }
+                }
+            </script>
+
+            <div>
+                <div class="bt" id="yiwancheng">
+                    已完成工单
+                    <span class="goods_num">{{ goods_init.done }} 项</span>
+                    <span class="zhankai">
+                    <svg t="1646220854140" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="1027">
+                    <path d="M300.104 940.045c-10.957 0-21.93-4.157-30.273-12.528-16.73-16.723-16.73-43.848-0.016-60.562L646.702 490.01 269.815 113.139c-16.715-16.723-16.715-43.848 0-60.58 16.723-16.686 43.848-16.686 60.578 0l407.16 407.161c16.707 16.732 16.707 43.857 0 60.562l-407.16 407.217c-8.359 8.37-19.336 12.546-30.289 12.546z"
+                          p-id="1028"></path>
+                </svg>
+                </span>
+
+                </div>
+                <div class="goods" hidden="hidden">
+
+                </div>
+                <script>
+                    $('#yiwancheng').on('click', (e) => {
+                        let div = $('#yiwancheng').next();
+                        $.ajax({
+                            url: '/get_goods',
+                            data: {status: '已处理', page: 1, sort_name: 'createtime'},
+                            type: 'GET',
+                            dataType: 'html',
+                            success: function (data) {
+
+                                // 旋转箭头
+                                let svg = $('#yiwancheng').find('svg')
+                                if (svg.css('transform') === 'matrix(0, 1, -1, 0, 0, 0)') {
+                                    svg.css('transform', 'rotate(0deg)')
+                                } else {
+                                    svg.css('transform', 'rotate(90deg)')
+                                }
+
+                                div.html(data)
+                                div.slideToggle('fast')
+                            },
+                            timeout: 3000,
+                            error: function () {
+                                alert('网络超时。');
+                            }
+                        });
+                    });
+                </script>
+
+                {% comment %}
+                只有 管理员 能查询到 所有订单 以及 已被删除的订单
+            {% endcomment %}
+                {% if user.level == '0' %}
+                    <div>
+                        <div class="bt" id="quanbu">
+                            全部工单
+                            <span class="goods_num">{{ goods_init.all }} 项</span>
+                            <span class="zhankai">
+                            <svg t="1646220854140" viewBox="0 0 1024 1024" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" p-id="1027">
+                            <path d="M300.104 940.045c-10.957 0-21.93-4.157-30.273-12.528-16.73-16.723-16.73-43.848-0.016-60.562L646.702 490.01 269.815 113.139c-16.715-16.723-16.715-43.848 0-60.58 16.723-16.686 43.848-16.686 60.578 0l407.16 407.161c16.707 16.732 16.707 43.857 0 60.562l-407.16 407.217c-8.359 8.37-19.336 12.546-30.289 12.546z"
+                                  p-id="1028"></path>
+                            </svg>
+                        </span>
+                        </div>
+                        <div class="goods" hidden="hidden">
+
+                        </div>
+                    </div>
+                    <script>
+                        $('#quanbu').on('click', (e) => {
+                            let div = $('#quanbu').next();
+                            $.ajax({
+                                url: '/get_goods',
+                                data: {page: 1, sort_name: 'create_time'},
+                                type: 'GET',
+                                dataType: 'html',
+                                success: function (data) {
+
+                                    // 旋转箭头
+                                    let svg = $('#quanbu').find('svg')
+                                    if (svg.css('transform') === 'matrix(0, 1, -1, 0, 0, 0)') {
+                                        svg.css('transform', 'rotate(0deg)')
+                                    } else {
+                                        svg.css('transform', 'rotate(90deg)')
+                                    }
+
+                                    div.html(data)
+                                    div.slideToggle('fast')
+                                },
+                                timeout: 3000,
+                                error: function () {
+                                    alert('网络超时。');
+                                }
+                            });
+                        });
+                    </script>
+
+                    <div>
+                        <div class="bt" id="yishanchu">
+                            已删除工单
+                            <span class="goods_num">{{ goods_init.del }} 项</span>
+                            <span class="zhankai">
+                                <svg t="1646220854140" viewBox="0 0 1024 1024" version="1.1"
+                                     xmlns="http://www.w3.org/2000/svg" p-id="1027">
+                                <path d="M300.104 940.045c-10.957 0-21.93-4.157-30.273-12.528-16.73-16.723-16.73-43.848-0.016-60.562L646.702 490.01 269.815 113.139c-16.715-16.723-16.715-43.848 0-60.58 16.723-16.686 43.848-16.686 60.578 0l407.16 407.161c16.707 16.732 16.707 43.857 0 60.562l-407.16 407.217c-8.359 8.37-19.336 12.546-30.289 12.546z"
+                                      p-id="1028"></path>
+                                </svg>
+                            </span>
+
+                        </div>
+                        <div class="goods" hidden="hidden">
+
+                        </div>
+                    </div>
+                    <script>
+                        $('#yishanchu').on('click', (e) => {
+                            let div = $('#yishanchu').next();
+                            $.ajax({
+                                url: '/get_goods',
+                                data: {status: '已删除', page: 1, sort_name: 'create_time'},
+                                type: 'GET',
+                                dataType: 'html',
+                                success: function (data) {
+
+                                    // 旋转箭头
+                                    let svg = $('#yishanchu').find('svg')
+                                    if (svg.css('transform') === 'matrix(0, 1, -1, 0, 0, 0)') {
+                                        svg.css('transform', 'rotate(0deg)')
+                                    } else {
+                                        svg.css('transform', 'rotate(90deg)')
+                                    }
+
+                                    div.html(data)
+                                    div.slideToggle('fast')
+                                },
+                                timeout: 3000,
+                                error: function () {
+                                    alert('网络超时。');
+                                }
+                            });
+
+                        });
+                    </script>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

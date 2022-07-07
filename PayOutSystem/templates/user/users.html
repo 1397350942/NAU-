@@ -1,0 +1,134 @@
+{% extends 'home/home.html' %}
+{% block right %}
+    <style>
+        #neirong {
+            background-color: white;
+            width: 96%;
+            margin: 10px auto;
+            padding: 20px;
+            box-shadow: #fead8f 0px 0px 20px;
+        }
+
+        .bt2 {
+            padding: 5px 20px;
+            background-color: #fe7843;
+            color: white;
+            font-size: 20px;
+        }
+
+        .users {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            background-color: #e2e2e2;
+            overflow: auto;
+            text-align: center;
+        }
+
+        table {
+            padding: 10px;
+            background-color: white;
+            margin: 20px auto;
+        }
+
+        th, td {
+            font-size: 16px;
+            padding: 5px 10px;
+            text-align: center;
+        }
+
+        th {
+            font-size: 18px;
+        }
+
+    </style>
+    <div id="neirong">
+        <div class="bt2">
+            已激活用户
+        </div>
+        <div class="users">
+            <table>
+                <thead>
+                <th>序号</th>
+                <th>用户名</th>
+                <th>昵称</th>
+                <th>手机号</th>
+                <th>权限级别</th>
+                <th>创建时间</th>
+                <th>更新时间</th>
+                <th>操作</th>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.number }}</td>
+                        {% if user.level == '0' %}
+                            <td>管理员</td>
+                        {% elif user.level == '1' %}
+                            <td>售后员</td>
+                        {% elif user.level == '2' %}
+                            <td>申报员</td>
+                        {% endif %}
+                        <td>{{ user.create_time }}</td>
+                        <td>{{ user.updata_time }}</td>
+                        <td>
+                            <a href="/user_info/{{ user.id }}">编辑</a>
+                            <a href="/disable_user/{{ user.id }}">禁用</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="bt2">
+            已禁用用户
+        </div>
+        <div class="users">
+            {% if nousers_length > 0 %}
+                <table>
+                    <thead>
+                    <th>序号</th>
+                    <th>用户名</th>
+                    <th>昵称</th>
+                    <th>手机号</th>
+                    <th>权限级别</th>
+                    <th>创建时间</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                    </thead>
+                    <tbody>
+                    {% for user in nousers %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.number }}</td>
+                            {% if user.level == '0' %}
+                                <td>管理员</td>
+                            {% elif user.level == '1' %}
+                                <td>售后员</td>
+                            {% elif user.level == '2' %}
+                                <td>申报员</td>
+                            {% endif %}
+                            <td>{{ user.create_time }}</td>
+                            <td>{{ user.updata_time }}</td>
+                            <td>
+                                <a href="/user_info/{{ user.id }}">编辑</a>
+                                <a href="/enable_user/{{ user.id }}">启用</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div>无数据..</div>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+    </div>
+{% endblock %}

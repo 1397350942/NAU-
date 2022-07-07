@@ -1,0 +1,190 @@
+{% extends 'home/home.html' %}
+
+{% block right %}
+    <style>
+        #neirong {
+            background-color: white;
+            width: 95%;
+            margin: 10px auto;
+            padding: 20px;
+            box-shadow: #fead8f 0px 0px 20px;
+        }
+
+        #bt {
+            padding: 5px 20px;
+            background-color: #fe7843;
+            color: white;
+            font-size: 20px;
+        }
+
+        #neirong > form {
+            margin-top: 20px;
+            font-size: 20px;
+            color: black;
+        }
+
+        .wtnr {
+            background-color: #fff6e5;
+            margin-right: 20px;
+            width: 400px;
+            padding: 20px;
+            float: left;
+            border-radius: 20px;
+        }
+
+        .wtnr > p {
+            font-size: 30px;
+            margin-bottom: 20px;
+
+        }
+
+        .wtnr > input, textarea {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            padding: 5px 10px;
+            border: #fe7843 solid 2px;
+            border-radius: 10px;
+            width: 90%;
+        }
+
+        .wtnr > input[type=radio] {
+            width: 20px;
+            height: 20px;
+            margin: 10px 5px 20px 20px;
+            position: relative;
+            top: 3px;
+        }
+
+        .wtnr > textarea {
+            width: 90%;
+            height: 80px;
+            font-size: 16px;
+        }
+
+        #neirong input[type=submit] {
+            font-size: 20px;
+            padding: 5px 30px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #fe7843;
+            border: none;
+            border-radius: 10px;
+        }
+
+        #neirong input[type=submit]:hover {
+            background-color: red;
+            cursor: pointer;
+        }
+
+    </style>
+
+    <div id="neirong">
+        <div id="bt">添加工单</div>
+        <form method="post" name="form1" action="" enctype="multipart/form-data" onsubmit="checkpass()">
+
+            {% csrf_token %}
+            <div id="wt" class="wtnr">
+                <p>问题相关</p>
+                问题标题:<br/>
+                <input type="text" name="title" required="required" placeholder="请填写问题概述"/><br/>
+                问题类型:<br/>
+                <input type="radio" id="r1" name="type" value="单号问题" required="required"/>单号问题
+                <input type="radio" id="r2" name="type" value="货物问题"/>货物问题
+                <input type="radio" id="r3" name="type" value="物流问题"/>物流问题
+                预期处理时限:<br/>
+                <input type="radio" name="time" value="86400" required="required"/>24小时
+                <input type="radio" name="time" value="172800"/>48小时
+                <input type="radio" name="time" value="259200" checked="checked"/>72小时
+                <br/>
+                问题详情：<br/>
+                <textarea name="detail" required="required" placeholder="请描述问题详情"></textarea><br/>
+                备注：<br/>
+                <textarea name="other" placeholder="填写其他信息，可不填"></textarea><br/>
+                <div id="file" hidden>
+                    附件（图片/视频）：
+                    <input type="file" name="files" onchange="return check_files(event)" id="up_file"
+                           accept="image/jpeg,image/png,image/gif,video/mp4" multiple/>
+                    <script>
+                        function check_files(event) {
+                            let files = event.target.files;
+                            console.log(files)
+                            for (let i = 0; i < files.length; i++) {
+                                console.log(files[i])
+                                // 如果是图片文件，大小不能超过 15 MB
+                                if (files[i].type.split('/')[0] == 'image' && files[i].size >= 1024 * 1024 * 15) {
+                                    alert("上传的图片大小不能超过 15M !")
+                                    event.target.value = '';
+                                    return false
+                                }
+                                // 如果是视频文件，大小不能超过 80 MB
+                                if (files[i].type.split('/')[0] == 'video' && files[i].size >= 1024 * 1024 * 80) {
+                                    alert("上传的视频大小不能超过 80M !")
+                                    event.target.value = '';
+                                    return false
+                                }
+                            }
+                            if (files.length > 3) {
+                                alert("上传文件数量不能超过3个！");
+                                event.target.value = '';
+                                return false
+                            }
+                        }
+                    </script>
+                    <p style="font-size: 16px;color:red">
+                        格式要求：
+                        <br/>图片(jpg、jpeg、png、gif等，大小不超过15M)；
+                        <br/>视频(mp4，大小不超过80M)
+                        <br/>文件个数不超过 3 个
+                    </p>
+
+                </div>
+            </div>
+
+            <div id="dd" class="wtnr">
+                <p>订单相关</p>
+                收货人：<br/>
+                <input type="text" name="clent_name" required="required" placeholder="请填写订单的收货人姓名"/>
+                <br/>物品名：<br/>
+                <input type="text" name="goods_name" required="required" placeholder="请填写客户下单物品名"/>
+                <br/>数量：<br/>
+                <input type="text" name="goods_count" required="required" placeholder="请填写客户下单数量"/>
+                <br/>物流单号：<br/>
+                <input type="text" name="goods_number" required="required" placeholder="请填写客户订单物流编号"/>
+                <br/>下单日期：<br/>
+                <input type="date" name="goods_time" required="required" value=""/>
+            </div>
+
+
+            <input type="submit" id="sub" value="提交问题"/>
+        </form>
+        <div class="clear"></div>
+    </div>
+    <script>
+        // 根据不同的问题类型调整表单
+        $('input[type=radio][name=type]').change(function () {
+            if (this.value === '单号问题') {
+                $(':input').attr('disabled', false);
+                // 禁用物流编号
+                $('input[name=goods_number]').attr('disabled', true).val('');
+                // 关闭文件上传
+                $('#file').attr('hidden', true)
+            } else if (this.value === '货物问题') {
+                $(':input').attr('disabled', false);
+                // 禁用物流编号
+                $('input[name=goods_number]').attr('disabled', true).val('');
+                // 开启文件上传
+                $('#file').attr('hidden', false)
+            } else if (this.value === '物流问题') {
+                $(':input').attr('disabled', false);
+                // 关闭文件上传
+                $('#file').attr('hidden', true)
+            }
+        })
+
+        $('#sub').click(function (e) {
+            return confirm('确定提交工单吗？');
+        });
+    </script>
+{% endblock right %}

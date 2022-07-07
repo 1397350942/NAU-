@@ -1,0 +1,359 @@
+{% extends 'home/home.html' %}
+
+{% block right %}
+    <style>
+        #neirong {
+            background-color: white;
+            width: 95%;
+            margin: 10px auto;
+            padding: 20px;
+            box-shadow: #fead8f 0px 0px 20px;
+        }
+
+        #bt {
+            padding: 5px 20px;
+            background-color: #fe7843;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        #neirong > form {
+            margin-top: 20px;
+            font-size: 20px;
+            color: black;
+        }
+
+        .wtnr {
+            background-color: #fff6e5;
+            margin-right: 20px;
+            width: 1000px;
+            padding: 20px;
+            float: left;
+            border-radius: 20px;
+        }
+
+        .wtnr > input, textarea {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            padding: 5px 10px;
+            border: #fe7843 solid 2px;
+            border-radius: 10px;
+        }
+
+        .wtnr > input[type=radio] {
+            width: 20px;
+            height: 20px;
+            margin: 10px 5px 20px 20px;
+            position: relative;
+            top: 3px;
+        }
+
+        .wtnr > textarea {
+            width: 80%;
+            height: 80px;
+            font-size: 16px;
+        }
+
+        .button {
+            font-size: 20px;
+            padding: 5px 30px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #fe7843;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .button:hover {
+            background-color: red;
+            cursor: pointer;
+        }
+
+        #pre {
+            float: right;
+            color: white;
+            fill: white;
+        }
+
+        #pre:hover {
+            color: red;
+            cursor: pointer;
+            fill: red;
+        }
+
+        .sub {
+            width: 400px;
+            float: left;
+        }
+
+        .sub > p {
+            margin-bottom: 10px;
+        }
+
+        .wt_title {
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        #wt_tag {
+            border-radius: 10px;
+            padding: 5px 10px;
+            background-color: #fead8f;
+            margin-bottom: 20px;
+        }
+
+        #wt_tag > span {
+            font-size: 18px;
+            color: black;
+            margin-right: 30px;
+        }
+
+        #wt_tag > span > span {
+            font-weight: bold;
+        }
+
+        #goods_op {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 20px;
+            background-color: #fff6e5;
+        }
+
+        #goods_op > p {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        #goods_op textarea {
+            width: 400px;
+            height: 60px;
+            float: left;
+        }
+
+        #goods_op input[type=submit] {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 5px 30px;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            background-color: green;
+            float: right;
+        }
+
+        #goods_op input[type=submit]:hover {
+            background-color: darkgreen;
+            cursor: pointer;
+        }
+
+        #cljg {
+            background-color: #fead8f;
+            padding: 10px;
+            width: 180px;
+            height: 200px;
+            float: left;
+            border-radius: 20px;
+
+        }
+
+        #cljg > p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .sub_file {
+            width: 100%;
+        }
+
+        .file_img {
+            width: 400px;
+            height: 300px;
+            margin: 10px;
+            display: inline-block;
+            float: left;
+        }
+
+        .file_video {
+            width: 800px;
+            height: 600px;
+            margin: 10px;
+        }
+    </style>
+
+    <div id="neirong">
+        <div id="bt">
+            <span id="xq">工单详情</span>
+            <span id="pre" onclick="javascript:location.href = '/goods'">
+                <svg t="1646134117831" class="icon2" viewBox="0 0 1024 1024" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg" p-id="808" width="200" height="200"><path
+                        d="M131.242667 239.658667A42.666667 42.666667 0 0 1 170.666667 213.333333h426.666666a298.666667 298.666667 0 1 1 0 597.333334H213.333333a42.666667 42.666667 0 1 1 0-85.333334h384a213.333333 213.333333 0 1 0 0-426.666666H273.664l76.501333 76.501333a42.666667 42.666667 0 0 1-60.330666 60.330667l-149.333334-149.333334a42.666667 42.666667 0 0 1-9.258666-46.506666z"
+                        p-id="809"></path>
+                </svg>
+                返回
+            </span>
+        </div>
+        <div id="wt" class="wtnr">
+            <div id="wt_tag">
+                <span><span>工单编号：</span>{{ goods.number }}</span>
+                <span><span>工单状态：</span>{{ goods.status.status }}</span>
+                <span><span>处理人员：</span>{{ goods.c_user.name }}</span>
+                {% if goods.status.status != '已处理' %}
+                    <span><span>剩余时间：</span><span id="time"></span></span>
+                    <script>
+                        $(function () {
+                            // 将获取到的提交时间转换为时间戳 毫秒
+                            var t = $('#tj_time').text();
+                            var reg = /[月日年]/g;
+                            tl = t.replace(reg, '/') + ':00';
+                            var tj_time = new Date(tl);
+
+                            // 获取当前时间戳 毫秒
+                            var dq_time = Date.now()
+
+                            // 计算时间差 毫秒
+                            var tc = dq_time - tj_time;
+                            console.log('已经过去' + tc)
+
+                            // 获取预期时间 毫秒
+                            var yt = parseInt($('#yq_time').attr('time')) * 1000;
+
+                            // 计算剩余时间
+                            var sy_time = yt - tc;
+                            console.log('剩余时间' + sy_time);
+
+                            //将毫秒数的时间转换为小时-分钟-秒
+                            function mill_to_strtime(mill) {
+                                var s = 1000;
+                                var m = 60 * 1000;
+                                var h = 60 * 60 * 1000;
+                                return [Math.floor(mill / h), Math.floor(mill % h / m), Math.floor(mill % m / s)];
+                            }
+
+                            // 倒计时
+                            var t = 0;
+                            var times = mill_to_strtime(sy_time)
+                            var timer = setInterval(function () {
+                                if (times[2] > 0) {
+                                    times[2] -= 1;
+                                    $('#time').text(times[0] + " 时 " + times[1] + " 分 " + times[2] + " 秒");
+                                } else if (times[2] <= 0 && times[1] > 0) {
+                                    times[2] = 59;
+                                    times[1] -= 1;
+                                    $('#time').text(times[0] + " 时 " + times[1] + " 分 " + times[2] + " 秒");
+                                } else if (times[2] <= 0 && times[1] <= 0 && times[0] > 0) {
+                                    times[2] = 59;
+                                    times[1] = 59;
+                                    times[0] -= 1;
+                                    $('#time').text(times[0] + " 时 " + times[1] + " 分 " + times[2] + " 秒");
+                                } else {
+                                    $('#time').text('已超时');
+                                    $('#time').css('color', 'red');
+                                    clearInterval(timer);
+                                }
+
+                            }, 1000);
+                        });
+                    </script>
+                {% endif %}
+            </div>
+
+            <div class="sub">
+                <div class="wt_title">订单详情：</div>
+                <p>物流单号：{{ goods.wuliu_number }}</p>
+                <p>收货人：{{ goods.clent_name }}</p>
+                <p>下单物品：{{ goods.goods_name }}</p>
+                <p>下单数量：{{ goods.goods_count }}</p>
+                <p>下单日期：{{ goods.buy_date }}</p>
+            </div>
+
+            <div class="sub">
+                <div class="wt_title">问题详情：</div>
+                <p>标题：{{ goods.title }}</p>
+                <p>类型：{{ goods.goods_type }}</p>
+                <p>详情：{{ goods.title }}</p>
+                <p>申报员：{{ goods.t_user.name }}</p>
+                <p>申报时间：<span id="tj_time">{{ goods.createtime }}</span></p>
+                <p>处理时限：<span id="yq_time" time="{{ goods.time }}">{{ yq_time }}</span>小时</p>
+                <p>备注：{{ goods.other }}</p>
+            </div>
+
+            {% if goods.status.status == '已处理' %}
+                <div id="cljg">
+                    <div class="wt_title"><b>处理结果：</b></div>
+                    <p>处理人员：{{ goods.c_user.name }}</p>
+                    <p>处理意见：</p>
+                    <p>{{ goods.comment }}</p>
+                </div>
+            {% endif %}
+
+            <div class="clear"></div>
+
+            <div class="sub_file">
+                <div class="wt_title" id="files">附件：</div>
+                {% for file in files %}
+                    {% if file.isimg %}
+                        <a href="/media/{{ file.file }}" target="_blank">
+                            <img src="/media/{{ file.file }}" class="file_img"/>
+                        </a>
+
+                    {% else %}
+                        <video class="file_video" controls>
+                            <source src="/media/{{ file.file }}" type="video/mp4"/>
+                        </video>
+                    {% endif %}
+                {% empty %}
+                    <p>无文件</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% comment %}
+            若当前订单 未处理 且 无处理人员（延时处理） 并且 用户非申报员 则显示 开始处理按钮
+        {% endcomment %}
+        {% if goods.status.status == '未处理' or goods.c_user == None %}
+            {% if goods.c_user == None and user.level != '2' %}
+                <a href="/start_goods/{{ goods.id }}"><input type="button" class="button" value="开始处理"/></a>
+            {% endif %}
+        {% endif %}
+
+        {% comment %}
+            若当前订单 （非 未处理 或 已处理 且 （用户为处理订单用户 或 管理用户）则显示 延时按钮
+        {% endcomment %}
+        {% if goods.status.status != '已处理' and goods.c_user != None%}
+            {% if goods.c_user == user or user.level == '0' %}
+                <button class="button"
+                        onclick="if(confirm('确定延时此订单？')){location.href = '/add_goods_time/{{ goods.id }}'}">
+                    延时24H
+                </button>
+            {% endif %}
+        {% endif %}
+
+        <div class="clear"></div>
+
+        {% comment %}
+            若当前是处理订单的用户 且 当前订单未处理完成，则显示 完成处理按钮等内容
+        {% endcomment %}
+        {% if goods.c_user == user and goods.status.status != '已处理' %}
+            <script>
+                function check() {
+                    return confirm('确定完成此订单？');
+                };
+            </script>
+            <div id="goods_op">
+                <p>处理意见：</p>
+                <form method="post" id="ok" onsubmit="return check()" action="/end_goods/{{ goods.id }}">
+                    {% csrf_token %}
+                    <textarea placeholder="在此处填写处理意见" name="comment" required="required"></textarea>
+                    <input type="submit" value="完成处理">
+                </form>
+                <div class="clear"></div>
+            </div>
+
+        {% endif %}
+    </div>
+
+
+{% endblock right %}
